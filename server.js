@@ -1,5 +1,7 @@
 const express = require("express");
 const multer = require("multer");
+const fs = require('fs')
+const sharp = require('sharp')
 
 const app = express();
 const storage = multer.memoryStorage();
@@ -17,8 +19,19 @@ app.post("/", upload.single("picture"), async (req, res) => {
         fs.mkdirSync("./uploads");
       }
     });
-    // Even more logic goes here.
+    const { buffer, originalname } = req.file;
+    const timestamp = new Date().toISOString();
+    const ref = `${originalname}.webp`;
+    //const ref = originalname
+
+    await sharp(buffer)
+   .webp({ quality: 20 })
+   .toFile("./uploads/" + ref);
+
+   const link = `http://localhost:3000/${ref}`;
+  return res.json({ link });
    });
    
+//app.use("/uploads", express.static("uploads"));   
 
 app.listen(3000);
