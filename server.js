@@ -20,12 +20,15 @@ app.post("/", upload.single("picture"), async (req, res) => {
       }
     });
     const { buffer, originalname } = req.file;
+    console.log(buffer)
     const timestamp = new Date().toISOString();
-    const ref = `${originalname}.webp`;
+    const ref = `${originalname.split('.')[0]}_${Date.now()}.webp`;
     //const ref = originalname
 
     await sharp(buffer)
    .webp({ quality: 20 })
+   //.resize(800, 600)
+   .resize({width: 1920})
    .toFile("./uploads/" + ref);
 
    const link = `http://localhost:3000/${ref}`;
